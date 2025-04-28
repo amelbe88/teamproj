@@ -1,4 +1,4 @@
-name: meal
+name: 
 description: A new Flutter project.
 publish_to: 'none'
 
@@ -10,7 +10,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  table_calendar: ^3.0.0
+  intl: ^0.18.1  # For formatting dates
+  path_provider: ^2.0.11  # To get file paths
+  pdf: ^3.6.0  # For generating PDFs
+  printing: ^5.6.0  # For printing PDFs
+  flutter_image_compress: ^2.4.0  # Updated to a version that supports null safety
+  screenshot: ^1.2.3  # For taking screenshots
 dev_dependencies:
   flutter_test:
     sdk: flutter
