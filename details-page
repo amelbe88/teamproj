@@ -1,0 +1,200 @@
+import 'package:flutter/material.dart';
+
+class RecipeDetailsPage extends StatefulWidget {
+  final Map<String, dynamic> food;
+
+  RecipeDetailsPage({required this.food});
+
+  @override
+  _RecipeDetailsPageState createState() => _RecipeDetailsPageState();
+}
+
+class _RecipeDetailsPageState extends State<RecipeDetailsPage> {
+  final Color customColor = Color(0xFFF3BF67);
+  final List<String> mockComments = [
+    "Délicieux ! Je recommande fortement.",
+    "Rapide et très bon.",
+    "Un peu trop salé pour moi.",
+    "Parfait pour un dîner rapide."
+  ];
+  double userRating = 0;
+  final TextEditingController _commentController = TextEditingController();
+
+  void _submitComment() {
+    final newComment = _commentController.text.trim();
+    if (newComment.isNotEmpty) {
+      setState(() {
+        mockComments.insert(0, newComment); // On ajoute en haut de la liste
+        _commentController.clear();
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final food = widget.food;
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        iconTheme: IconThemeData(color: customColor),
+        elevation: 0,
+        title: Text(
+          food['name'],
+          style: TextStyle(color: customColor, fontWeight: FontWeight.bold),
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Image
+            ClipRRect(
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(25),
+                bottomRight: Radius.circular(25),
+              ),
+              child: Image.network(
+                food['image'],
+                width: double.infinity,
+                height: 250,
+                fit: BoxFit.cover,
+              ),
+            ),
+
+            // Infos générales
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    food['name'],
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    food['description'] ?? "Aucune description.",
+                    style: TextStyle(fontSize: 16, color: Colors.grey[700]),
+                  ),
+                  SizedBox(height: 20),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(Icons.schedule, color: customColor),
+                          SizedBox(width: 5),
+                          Text(food['time'], style: TextStyle(fontSize: 16)),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Icon(Icons.star, color: customColor),
+                          SizedBox(width: 5),
+                          Text("${food['rating']} / 5.0", style: TextStyle(fontSize: 16)),
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          Icon(Icons.monetization_on, color: customColor),
+                          SizedBox(width: 5),
+                          Text(food['price'], style: TextStyle(fontSize: 16)),
+                        ],
+                      ),
+                    ],
+                  ),
+
+                  SizedBox(height: 30),
+
+                  // Section notation
+                  Text(
+                    "Votre note",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  Row(
+                    children: List.generate(5, (index) {
+                      return IconButton(
+                        icon: Icon(
+                          index < userRating ? Icons.star : Icons.star_border,
+                          color: customColor,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            userRating = index + 1.0;
+                          });
+                        },
+                      );
+                    }),
+                  ),
+
+                  SizedBox(height: 30),
+
+                  // Section commentaires
+                  Text(
+                    "Commentaires",
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  SizedBox(height: 10),
+
+                  ...mockComments.map((c) => Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 6.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Icon(Icons.comment, color: customColor),
+                            SizedBox(width: 10),
+                            Expanded(child: Text(c)),
+                          ],
+                        ),
+                      )),
+
+                  SizedBox(height: 20),
+
+                  // Ajout de commentaire
+                  TextField(
+                    controller: _commentController,
+                    decoration: InputDecoration(
+                      labelText: "Ajouter un commentaire",
+                      border: OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: customColor),
+                      ),
+                    ),
+                    maxLines: 2,
+                  ),
+                  SizedBox(height: 10),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: ElevatedButton(
+                      onPressed: _submitComment,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: customColor,
+                      ),
+                      child: Text("Envoyer"),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
